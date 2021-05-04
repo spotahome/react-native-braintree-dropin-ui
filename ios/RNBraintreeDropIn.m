@@ -65,7 +65,6 @@ RCT_EXPORT_METHOD(show:(NSDictionary*)options resolver:(RCTPromiseResolveBlock)r
         NSDictionary* threeDSecureBillingAddress = threeDSecureOptions[@"billingAddress"];
         if(threeDSecureBillingAddress){
             BTThreeDSecurePostalAddress *billingAddress = [BTThreeDSecurePostalAddress new];
-            // BTThreeDSecurePostalAddress *billingAddress = [[BTThreeDSecurePostalAddress alloc] init];
 
             if(threeDSecureBillingAddress[@"givenName"]){
                 billingAddress.givenName = threeDSecureBillingAddress[@"givenName"];
