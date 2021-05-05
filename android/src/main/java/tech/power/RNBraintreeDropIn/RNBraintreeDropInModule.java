@@ -17,6 +17,9 @@ import com.braintreepayments.api.dropin.DropInResult;
 import com.braintreepayments.api.models.PaymentMethodNonce;
 import com.braintreepayments.api.models.CardNonce;
 import com.braintreepayments.api.models.ThreeDSecureInfo;
+import com.braintreepayments.api.models.ThreeDSecureRequest;
+import com.braintreepayments.api.models.ThreeDSecureAdditionalInformation;
+import com.braintreepayments.api.models.ThreeDSecurePostalAddress;
 import com.braintreepayments.api.models.GooglePaymentRequest;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.WalletConstants;
@@ -84,9 +87,63 @@ public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
 
       isVerifyingThreeDSecure = true;
 
+      String amount = String.valueOf(threeDSecureOptions.getDouble("amount"));
+
+      ThreeDSecureRequest threeDSecureRequest = new ThreeDSecureRequest()
+        .amount(amount)
+        .versionRequested(ThreeDSecureRequest.VERSION_2);
+
+      if (threeDSecureOptions.hasKey("email")) {
+        threeDSecureRequest.email(threeDSecureOptions.getString("email"));
+      }
+
+      if (threeDSecureOptions.hasKey("billingAddress")) {
+        final ReadableMap threeDSecureBillingAddress = threeDSecureOptions.getMap("billingAddress");
+        ThreeDSecurePostalAddress billingAddress = new ThreeDSecurePostalAddress();
+
+        if (threeDSecureBillingAddress.hasKey("givenName")) {
+          billingAddress.givenName(threeDSecureBillingAddress.getString("givenName"));
+        }
+
+        if (threeDSecureBillingAddress.hasKey("surname")) {
+          billingAddress.surname(threeDSecureBillingAddress.getString("surname"));
+        }
+
+        if (threeDSecureBillingAddress.hasKey("streetAddress")) {
+          billingAddress.streetAddress(threeDSecureBillingAddress.getString("streetAddress"));
+        }
+
+        if (threeDSecureBillingAddress.hasKey("extendedAddress")) {
+          billingAddress.extendedAddress(threeDSecureBillingAddress.getString("extendedAddress"));
+        }
+
+        if (threeDSecureBillingAddress.hasKey("locality")) {
+          billingAddress.locality(threeDSecureBillingAddress.getString("locality"));
+        }
+
+        if (threeDSecureBillingAddress.hasKey("region")) {
+          billingAddress.region(threeDSecureBillingAddress.getString("region"));
+        }
+
+        if (threeDSecureBillingAddress.hasKey("countryCodeAlpha2")) {
+          billingAddress.countryCodeAlpha2(threeDSecureBillingAddress.getString("countryCodeAlpha2"));
+        }
+
+        if (threeDSecureBillingAddress.hasKey("postalCode")) {
+          billingAddress.postalCode(threeDSecureBillingAddress.getString("postalCode"));
+        }
+
+        if (threeDSecureBillingAddress.hasKey("phoneNumber")) {
+          billingAddress.phoneNumber(threeDSecureBillingAddress.getString("phoneNumber"));
+        }
+
+        threeDSecureRequest.billingAddress(billingAddress);
+      }
+
       dropInRequest
-      .amount(String.valueOf(threeDSecureOptions.getDouble("amount")))
-      .requestThreeDSecureVerification(true);
+        .threeDSecureRequest(threeDSecureRequest)
+        .amount(amount)
+        .requestThreeDSecureVerification(true);
     }
 
     mPromise = promise;
